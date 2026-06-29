@@ -1,0 +1,91 @@
+{
+  "item_id": "tt_item_004_gao_solicitation_impropriety_late",
+  "family_id": "family_gao_timeliness_demo",
+  "data_version": "public_dev_v0.1",
+  "jurisdiction": "US-federal-demo",
+  "source_backbone": {
+    "type": "procedural_pattern",
+    "description": "Structured after GAO protest timeliness rules. Public-dev version uses perturbed/demo facts.",
+    "public_sources": [
+      "https://www.gao.gov/legal/bid-protests"
+    ]
+  },
+  "documents": [
+    {
+      "doc_id": "PROTEST_RULE",
+      "title": "Bid Protest Rule",
+      "path": "data/public_dev/documents/family_gao_timeliness.md"
+    },
+    {
+      "doc_id": "SOLICITATION",
+      "title": "Solicitation Timeline",
+      "path": "data/public_dev/documents/family_gao_timeliness.md"
+    },
+    {
+      "doc_id": "ACTION_LOG",
+      "title": "Protest Action Log",
+      "path": "data/public_dev/documents/family_gao_timeliness.md"
+    }
+  ],
+  "task": {
+    "prompt": "Determine whether the protest filing is procedurally valid. Return JSON only.",
+    "output_schema": "TenderTimelineAnswer",
+    "calendar_id": "us_federal_2026_demo",
+    "action_log": {
+      "protester": "Bidder A",
+      "ground": "apparent_solicitation_impropriety",
+      "issue_apparent_before_proposal_deadline": true,
+      "proposal_deadline": "2026-07-20T17:00:00-04:00",
+      "protest_filed": "2026-07-21T09:00:00-04:00",
+      "notes": "Protest filed after the initial proposal deadline."
+    }
+  },
+  "expected_answer": {
+    "governing_clause_id": "4 CFR §21.2(a)(1)",
+    "operative_deadline": "2026-07-20T17:00:00-04:00",
+    "action_datetime": "2026-07-21T09:00:00-04:00",
+    "precondition_status": "unsatisfied",
+    "verdict": "INVALID",
+    "failure_reason_code": "MISSED_PROTEST_WINDOW",
+    "citation": {
+      "rule": "4 CFR §21.2(a)(1)",
+      "proposal_deadline": "Solicitation Timeline",
+      "filing": "Protest Action Log"
+    }
+  },
+  "grading": {
+    "strict_fields": ["verdict", "failure_reason_code", "operative_deadline", "governing_clause_id"],
+    "date_fields": ["operative_deadline", "action_datetime"],
+    "required_clause_keywords": ["4 CFR §21.2(a)(1)"],
+    "clause_grounding_required": true
+  },
+  "compute_spec": {
+    "rule_type": "protest_window",
+    "protest_subtype": "apparent_solicitation_impropriety",
+    "governing_clause_id": "4 CFR §21.2(a)(1)",
+    "calendar_id": "us_federal_2026_demo",
+    "proposal_deadline": "2026-07-20T17:00:00-04:00"
+  },
+  "contrast_group": "gao_timeliness_pair",
+  "failure_modes": [
+    "WRONG_PROTEST_RULE",
+    "DISTRACTOR_CLAUSE",
+    "TIMEZONE_ERROR"
+  ],
+  "trap": "Model may wrongly use 10-day known-basis rule instead of before-proposal-deadline rule.",
+  "perturbation_certificate": {
+    "allowed_variables": [
+      "protest filing timestamp",
+      "proposal deadline"
+    ],
+    "prohibited_variables": [
+      "changing apparent-impropriety rule",
+      "changing 10-day known-basis rule"
+    ],
+    "invariant_assumptions": [
+      "Solicitation impropriety was apparent before proposal deadline",
+      "4 CFR §21.2(a)(1) controls apparent solicitation improprieties"
+    ],
+    "review_status": "demo_self_reviewed"
+  }
+}

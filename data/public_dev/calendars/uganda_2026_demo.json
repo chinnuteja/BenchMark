@@ -1,0 +1,10 @@
+{
+  "calendar_id": "uganda_2026_demo",
+  "timezone": "Africa/Kampala",
+  "working_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  "holidays": [
+    {"date": "2026-06-03", "name": "Martyrs Day - demo"},
+    {"date": "2026-10-09", "name": "Independence Day - demo"}
+  ],
+  "note": "Demo calendar for public-dev benchmark items; not official legal calendar."
+}

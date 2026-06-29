@@ -1,0 +1,87 @@
+{
+  "item_id": "tt_item_006_uganda_admin_review_late",
+  "family_id": "family_uganda_admin_review_demo",
+  "data_version": "public_dev_v0.1",
+  "jurisdiction": "Uganda-demo",
+  "source_backbone": {
+    "type": "procedural_pattern",
+    "description": "Structured after Uganda-style administrative review filing windows. Public-dev version uses perturbed/demo facts.",
+    "public_sources": []
+  },
+  "documents": [
+    {
+      "doc_id": "REVIEW_RULE",
+      "title": "Administrative Review Rule",
+      "path": "data/public_dev/documents/family_uganda_admin_review.md"
+    },
+    {
+      "doc_id": "DECISION_TIMELINE",
+      "title": "Decision Timeline",
+      "path": "data/public_dev/documents/family_uganda_admin_review.md"
+    },
+    {
+      "doc_id": "FILING_LOG",
+      "title": "Review Filing Log",
+      "path": "data/public_dev/documents/family_uganda_admin_review.md"
+    }
+  ],
+  "task": {
+    "prompt": "Determine whether the administrative review filing is procedurally valid. Return JSON only.",
+    "output_schema": "TenderTimelineAnswer",
+    "calendar_id": "uganda_2026_demo",
+    "action_log": {
+      "applicant": "Bidder A",
+      "decision_received": "2026-09-01",
+      "review_filed": "2026-09-12T10:00:00+03:00",
+      "notes": "Review filed one day after the 10-calendar-day window expired."
+    }
+  },
+  "expected_answer": {
+    "governing_clause_id": "Demo Rule 10.1",
+    "operative_deadline": "2026-09-11T23:59:00+03:00",
+    "action_datetime": "2026-09-12T10:00:00+03:00",
+    "precondition_status": "unsatisfied",
+    "verdict": "INVALID",
+    "failure_reason_code": "MISSED_PROTEST_WINDOW",
+    "citation": {
+      "rule": "Demo Rule 10.1",
+      "receipt": "Decision Timeline",
+      "filing": "Review Filing Log"
+    }
+  },
+  "grading": {
+    "strict_fields": ["verdict", "failure_reason_code", "operative_deadline", "governing_clause_id"],
+    "date_fields": ["operative_deadline", "action_datetime"],
+    "required_clause_keywords": ["Demo Rule 10.1"],
+    "clause_grounding_required": true
+  },
+  "compute_spec": {
+    "rule_type": "admin_review_window",
+    "governing_clause_id": "Demo Rule 10.1",
+    "calendar_id": "uganda_2026_demo",
+    "window_days": 10,
+    "deadline_tz_offset": "+03:00",
+    "deadline_end_of_day_time": "23:59:00"
+  },
+  "failure_modes": [
+    "CALENDAR_DAY_ERROR",
+    "WRONG_COUNTING_RULE",
+    "TIMEZONE_ERROR"
+  ],
+  "trap": "Model may count Day 1 from receipt date instead of the day after receipt.",
+  "perturbation_certificate": {
+    "allowed_variables": [
+      "decision receipt date",
+      "filing timestamp"
+    ],
+    "prohibited_variables": [
+      "changing Day 1 counting rule",
+      "changing 10-day window length"
+    ],
+    "invariant_assumptions": [
+      "Day 1 is the day after receipt of the Accounting Officer decision",
+      "deadline expires at 23:59 local time on Day 10"
+    ],
+    "review_status": "demo_self_reviewed"
+  }
+}

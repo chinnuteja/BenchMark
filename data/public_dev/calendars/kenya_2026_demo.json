@@ -1,0 +1,9 @@
+{
+  "calendar_id": "kenya_2026_demo",
+  "timezone": "Africa/Nairobi",
+  "working_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  "holidays": [
+    {"date": "2026-06-01", "name": "Madaraka Day - demo"}
+  ],
+  "note": "Demo calendar for public-dev benchmark items; not official legal calendar."
+}

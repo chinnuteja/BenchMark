@@ -1,0 +1,93 @@
+{
+  "item_id": "tt_item_001_late_submission",
+  "family_id": "family_kenya_bid_security_demo",
+  "data_version": "public_dev_v0.1",
+  "jurisdiction": "Kenya-demo",
+  "source_backbone": {
+    "type": "procedural_pattern",
+    "description": "Structured after a PPARB-style late submission dispute. Public-dev version uses perturbed/demo facts.",
+    "public_sources": [
+      "https://new.kenyalaw.org/judgments/KEPPARB/",
+      "https://ppra.go.ke/arb-decisions/"
+    ]
+  },
+  "documents": [
+    {
+      "doc_id": "ITB",
+      "title": "Instructions to Bidders",
+      "path": "data/public_dev/documents/family_kenya_bid_security.md"
+    },
+    {
+      "doc_id": "TDS",
+      "title": "Tender Data Sheet",
+      "path": "data/public_dev/documents/family_kenya_bid_security.md"
+    },
+    {
+      "doc_id": "ADD2",
+      "title": "Addendum 2",
+      "path": "data/public_dev/documents/family_kenya_bid_security.md"
+    },
+    {
+      "doc_id": "ACTION_LOG",
+      "title": "Bidder Action Log",
+      "path": "data/public_dev/documents/family_kenya_bid_security.md"
+    }
+  ],
+  "task": {
+    "prompt": "Determine whether the bidder's submission is procedurally valid. Return JSON only.",
+    "output_schema": "TenderTimelineAnswer",
+    "calendar_id": "kenya_2026_demo",
+    "action_log": {
+      "bidder": "Bidder A",
+      "submission_datetime": "2026-06-14T10:03:00+03:00",
+      "notes": "Electronic submission received 3 minutes after the extended deadline."
+    }
+  },
+  "expected_answer": {
+    "governing_clause_id": "Addendum 2 §1 read with ITB 22.1",
+    "operative_deadline": "2026-06-14T10:00:00+03:00",
+    "action_datetime": "2026-06-14T10:03:00+03:00",
+    "precondition_status": "not_evaluated",
+    "verdict": "INVALID",
+    "failure_reason_code": "LATE_SUBMISSION",
+    "citation": {
+      "deadline": "Addendum 2 §1; ITB 22.1",
+      "submission": "Bidder Action Log"
+    }
+  },
+  "grading": {
+    "strict_fields": ["verdict", "failure_reason_code", "operative_deadline", "governing_clause_id"],
+    "date_fields": ["operative_deadline", "action_datetime"],
+    "required_clause_keywords": ["Addendum 2", "ITB 22.1"],
+    "clause_grounding_required": true
+  },
+  "compute_spec": {
+    "rule_type": "bid_security_cascade",
+    "governing_clause_id": "Addendum 2 §1 read with ITB 22.1",
+    "calendar_id": "kenya_2026_demo",
+    "base_deadline": "2026-06-10T10:00:00+03:00",
+    "addendum_deadline": "2026-06-14T10:00:00+03:00",
+    "bid_validity_days": 120,
+    "bid_security_extra_days": 28
+  },
+  "failure_modes": [
+    "ADDENDUM_OVERRIDE",
+    "LATE_SUBMISSION",
+    "DISTRACTOR_CLAUSE"
+  ],
+  "trap": "Model may use the base Tender Data Sheet June 10 deadline instead of Addendum 2's June 14 deadline.",
+  "perturbation_certificate": {
+    "allowed_variables": [
+      "submission timestamp",
+      "addendum deadline"
+    ],
+    "prohibited_variables": [
+      "changing submission deadline rule",
+      "introducing discretionary cure period"
+    ],
+    "invariant_assumptions": [
+      "Addendum 2 validly controls the submission deadline"
+    ],
+    "review_status": "demo_self_reviewed"
+  }
+}

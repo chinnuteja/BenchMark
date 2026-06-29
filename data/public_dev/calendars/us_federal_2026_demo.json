@@ -1,0 +1,10 @@
+{
+  "calendar_id": "us_federal_2026_demo",
+  "timezone": "America/New_York",
+  "working_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+  "holidays": [
+    {"date": "2026-07-03", "name": "Independence Day observed - demo"},
+    {"date": "2026-09-07", "name": "Labor Day - demo"}
+  ],
+  "note": "Demo calendar for public-dev benchmark items; not official legal calendar."
+}

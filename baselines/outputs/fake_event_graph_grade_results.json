@@ -1,0 +1,280 @@
+{
+  "summary": {
+    "num_items": 6,
+    "strict_accuracy": 0.8333,
+    "verdict_accuracy": 1.0,
+    "failure_code_accuracy": 0.8333,
+    "clause_grounding_accuracy": 1.0,
+    "parse_error_rate": 0.0,
+    "paired_consistency": 1.0,
+    "right_reason_accuracy": 0.8333
+  },
+  "items": [
+    {
+      "item_id": "tt_item_001_late_submission",
+      "family_id": "family_kenya_bid_security_demo",
+      "passed": true,
+      "strict_score": 1,
+      "verdict_score": 1,
+      "failure_code_score": 1,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "INVALID",
+          "predicted": "INVALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "LATE_SUBMISSION",
+          "predicted": "LATE_SUBMISSION",
+          "passed": true
+        },
+        "operative_deadline": {
+          "expected": "2026-06-14T10:00:00+03:00",
+          "predicted": "2026-06-14T10:00:00+03:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "Addendum 2 \u00a71 read with ITB 22.1",
+          "predicted": "Addendum 2 \u00a71 read with ITB 22.1",
+          "expected_contains": [
+            "Addendum 2",
+            "ITB 22.1"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [],
+      "diagnosis": [],
+      "failure_attribution": [],
+      "attribution_detail": [],
+      "contrast_group": null
+    },
+    {
+      "item_id": "tt_item_002_bid_security_short",
+      "family_id": "family_kenya_bid_security_demo",
+      "passed": true,
+      "strict_score": 1,
+      "verdict_score": 1,
+      "failure_code_score": 1,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "INVALID",
+          "predicted": "INVALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "INSUFFICIENT_BID_SECURITY_VALIDITY",
+          "predicted": "INSUFFICIENT_BID_SECURITY_VALIDITY",
+          "passed": true
+        },
+        "operative_deadline": {
+          "expected": "2026-06-14T10:00:00+03:00",
+          "predicted": "2026-06-14T10:00:00+03:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "ITB 19.3 read with ITB 18.1 and Addendum 2 \u00a71",
+          "predicted": "ITB 19.3 read with ITB 18.1 and Addendum 2 \u00a71",
+          "expected_contains": [
+            "ITB 19.3",
+            "ITB 18.1",
+            "Addendum 2"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [],
+      "diagnosis": [],
+      "failure_attribution": [],
+      "attribution_detail": [],
+      "contrast_group": "kenya_bid_security_pair"
+    },
+    {
+      "item_id": "tt_item_003_valid_control",
+      "family_id": "family_kenya_bid_security_demo",
+      "passed": true,
+      "strict_score": 1,
+      "verdict_score": 1,
+      "failure_code_score": 1,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "VALID",
+          "predicted": "VALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "VALID",
+          "predicted": "VALID",
+          "passed": true
+        },
+        "operative_deadline": {
+          "expected": "2026-06-14T10:00:00+03:00",
+          "predicted": "2026-06-14T10:00:00+03:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "ITB 19.3 read with ITB 18.1 and Addendum 2 \u00a71",
+          "predicted": "ITB 19.3 read with ITB 18.1 and Addendum 2 \u00a71",
+          "expected_contains": [
+            "ITB 19.3",
+            "ITB 18.1",
+            "Addendum 2"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [],
+      "diagnosis": [],
+      "failure_attribution": [],
+      "attribution_detail": [],
+      "contrast_group": "kenya_bid_security_pair"
+    },
+    {
+      "item_id": "tt_item_004_gao_solicitation_impropriety_late",
+      "family_id": "family_gao_timeliness_demo",
+      "passed": false,
+      "strict_score": 0,
+      "verdict_score": 1,
+      "failure_code_score": 0,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "INVALID",
+          "predicted": "INVALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "MISSED_PROTEST_WINDOW",
+          "predicted": "ADDENDUM_OVERRIDE_IGNORED",
+          "passed": false
+        },
+        "operative_deadline": {
+          "expected": "2026-07-20T17:00:00-04:00",
+          "predicted": "2026-07-20T17:00:00-04:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "4 CFR \u00a721.2(a)(1)",
+          "predicted": "4 CFR \u00a721.2(a)(1)",
+          "expected_contains": [
+            "4 CFR \u00a721.2(a)(1)"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [
+        "wrong_failure_reason_code"
+      ],
+      "diagnosis": [
+        "Failure reason code does not match expected classification."
+      ],
+      "failure_attribution": [
+        "WRONG_FAILURE_CODE"
+      ],
+      "attribution_detail": [
+        {
+          "category": "WRONG_FAILURE_CODE",
+          "message": "Failure reason code does not match expected classification.",
+          "evidence": {
+            "expected": "MISSED_PROTEST_WINDOW",
+            "predicted": "ADDENDUM_OVERRIDE_IGNORED"
+          }
+        }
+      ],
+      "contrast_group": "gao_timeliness_pair"
+    },
+    {
+      "item_id": "tt_item_005_gao_known_basis_timely",
+      "family_id": "family_gao_timeliness_demo",
+      "passed": true,
+      "strict_score": 1,
+      "verdict_score": 1,
+      "failure_code_score": 1,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "VALID",
+          "predicted": "VALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "VALID",
+          "predicted": "VALID",
+          "passed": true
+        },
+        "operative_deadline": {
+          "expected": "2026-08-15T23:59:00-04:00",
+          "predicted": "2026-08-15T23:59:00-04:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "4 CFR \u00a721.2(a)(2)",
+          "predicted": "4 CFR \u00a721.2(a)(2)",
+          "expected_contains": [
+            "4 CFR \u00a721.2(a)(2)"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [],
+      "diagnosis": [],
+      "failure_attribution": [],
+      "attribution_detail": [],
+      "contrast_group": "gao_timeliness_pair"
+    },
+    {
+      "item_id": "tt_item_006_uganda_admin_review_late",
+      "family_id": "family_uganda_admin_review_demo",
+      "passed": true,
+      "strict_score": 1,
+      "verdict_score": 1,
+      "failure_code_score": 1,
+      "clause_grounding_score": 1,
+      "date_score": 1.0,
+      "field_results": {
+        "verdict": {
+          "expected": "INVALID",
+          "predicted": "INVALID",
+          "passed": true
+        },
+        "failure_reason_code": {
+          "expected": "MISSED_PROTEST_WINDOW",
+          "predicted": "MISSED_PROTEST_WINDOW",
+          "passed": true
+        },
+        "operative_deadline": {
+          "expected": "2026-09-11T23:59:00+03:00",
+          "predicted": "2026-09-11T23:59:00+03:00",
+          "passed": true
+        },
+        "governing_clause_id": {
+          "expected": "Demo Rule 10.1",
+          "predicted": "Demo Rule 10.1",
+          "expected_contains": [
+            "Demo Rule 10.1"
+          ],
+          "missing_keywords": [],
+          "passed": true
+        }
+      },
+      "errors": [],
+      "diagnosis": [],
+      "failure_attribution": [],
+      "attribution_detail": [],
+      "contrast_group": null
+    }
+  ]
+}

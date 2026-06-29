@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tender_timeline*"]
+
+[project]
+name = "tender-timeline"
+version = "0.1.0"
+description = "MVP benchmark for procedural compliance in procurement documents"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "typer>=0.9",
+    "rich>=13.0",
+    "python-dotenv>=1.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.5"
+]
+providers = [
+    "openai>=1.0",
+    "anthropic>=0.30",
+    "google-generativeai>=0.8"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,103 @@
+{
+  "rows": [
+    {
+      "file": "azure_gpt54nano_clause_first_grade_results.json",
+      "model": "azure_gpt54nano",
+      "prompt": "clause_first",
+      "strict_accuracy": 0.6667,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 1.0,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 0.5,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "azure_gpt54nano_event_graph_grade_results.json",
+      "model": "azure_gpt54nano",
+      "prompt": "event_graph",
+      "strict_accuracy": 0.6667,
+      "verdict_accuracy": 0.8333,
+      "clause_grounding_accuracy": 1.0,
+      "paired_consistency": 0.5,
+      "right_reason_accuracy": 0.5,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "azure_gpt54nano_naive_grade_results.json",
+      "model": "azure_gpt54nano",
+      "prompt": "naive",
+      "strict_accuracy": 0.6667,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 0.8333,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 0.5,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "fake_clause_first_grade_results.json",
+      "model": "fake",
+      "prompt": "clause_first",
+      "strict_accuracy": 0.6667,
+      "verdict_accuracy": 0.8333,
+      "clause_grounding_accuracy": 0.8333,
+      "paired_consistency": 0.5,
+      "right_reason_accuracy": 0.6667,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "fake_event_graph_grade_results.json",
+      "model": "fake",
+      "prompt": "event_graph",
+      "strict_accuracy": 0.8333,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 1.0,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 0.8333,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "fake_naive_grade_results.json",
+      "model": "fake",
+      "prompt": "naive",
+      "strict_accuracy": 0.3333,
+      "verdict_accuracy": 0.6667,
+      "clause_grounding_accuracy": 0.3333,
+      "paired_consistency": 0.5,
+      "right_reason_accuracy": 0.3333,
+      "parse_error_rate": 0.1667
+    },
+    {
+      "file": "openai_gpt55_clause_first_grade_results.json",
+      "model": "openai_gpt55",
+      "prompt": "clause_first",
+      "strict_accuracy": 1.0,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 1.0,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 1.0,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "openai_gpt55_event_graph_first_grade_results.json",
+      "model": "openai_gpt55",
+      "prompt": "event_graph_first",
+      "strict_accuracy": 0.8333,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 1.0,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 0.8333,
+      "parse_error_rate": 0.0
+    },
+    {
+      "file": "openai_gpt55_naive_grade_results.json",
+      "model": "openai_gpt55",
+      "prompt": "naive",
+      "strict_accuracy": 0.8333,
+      "verdict_accuracy": 1.0,
+      "clause_grounding_accuracy": 0.8333,
+      "paired_consistency": 1.0,
+      "right_reason_accuracy": 0.8333,
+      "parse_error_rate": 0.0
+    }
+  ]
+}
