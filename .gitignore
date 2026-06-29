@@ -14,11 +14,4 @@ cache/
 # Local harness config — contains recorded API keys, never publish
 .claude/
 
-# Internal planning/strategy notes — not part of the published benchmark
-01_foundation_data_schema.md
-02_grader_tests_quality_gates.md
-03_baselines_model_runner_report.md
-04_polish_release_serious_applicant.md
-tender_timeline_mvp_implementation_spec.md
-whichmodels.md
-why_tender_timeline_needs_vals_fellowship.md
+
