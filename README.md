@@ -6,6 +6,51 @@ A public-dev MVP for a frontier-LLM benchmark on procedural compliance in intern
 
 TENDER-TIMELINE tests whether models can construct and verify legally operative event graphs under addenda, deadlines, calendars, and preconditions.
 
+## Real-model results summary (two deployments)
+
+Two real OpenAI-family models, three prompts each (18 + 18 live records, zero parse errors).
+
+**Azure `gpt-5.4-nano`** (weaker / contrast model):
+
+| Prompt | Strict | Verdict | Failure Code | Clause | Paired Consist. | Right-Reason |
+|--------|-------:|--------:|-------------:|-------:|----------------:|-------------:|
+| naive | 0.67 | 1.00 | 0.67 | 0.83 | 1.00 | 0.50 |
+| clause_first | 0.67 | 1.00 | 0.67 | 1.00 | 1.00 | 0.50 |
+| event_graph_first | 0.67 | 0.83 | 0.67 | 1.00 | **0.50** | 0.50 |
+
+**OpenAI `gpt-5.5`** (frontier model):
+
+| Prompt | Strict | Verdict | Failure Code | Clause | Paired Consist. | Right-Reason |
+|--------|-------:|--------:|-------------:|-------:|----------------:|-------------:|
+| naive | 0.83 | 1.00 | 0.83 | 0.83 | 1.00 | 0.83 |
+| clause_first | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
+| event_graph_first | 0.83 | 1.00 | 1.00 | 1.00 | 1.00 | 0.83 |
+
+**The benchmark discriminates.** `gpt-5.4-nano` falls into the Kenya bid-security cascade trap — on
+`event_graph_first` it grounds all three clauses and uses the Addendum 2 deadline but miscalculates the
+cascade (`Nov 6` vs `Nov 9`), returns **VALID**, and `paired_consistency` drops to **0.50**
+(auto-tagged `CASCADE_ARITHMETIC_ERROR`). `gpt-5.5` **solves that trap** on every prompt — verdict 1.00,
+paired consistency 1.00 throughout — and reaches a clean **1.00 strict on `clause_first`**.
+
+**What gpt-5.5 still trips on (honest residuals, all on Item 002):**
+- **Failure-code taxonomy** — it understands the defect but labels it `BID_SECURITY_VALIDITY_TOO_SHORT`
+  instead of the canonical `INSUFFICIENT_BID_SECURITY_VALIDITY` (taxonomy, not reasoning).
+- **A missed clause keyword** on `naive` (omits "Addendum 2" from its grounding).
+
+> Note: running `gpt-5.5` surfaced — and we then fixed — an end-of-day grading artifact on Item 005
+> (`23:59:59` vs gold `23:59:00`). The grader now treats end-of-day `23:59:00`–`23:59:59` as equivalent;
+> see Limitations. The tables above reflect the corrected grader.
+
+Full report: `reports/real_model_eval_report.md`; cross-model table: `reports/leaderboard.md`.
+
+## Core failure case (Item 002)
+
+Base Tender Data Sheet deadline: **10 June 2026**. Addendum 2 extends submission to **14 June 2026**. Bid validity runs 120 calendar days from the controlling deadline; bid security must remain valid 28 days beyond that (ITB 18.1 + ITB 19.3).
+
+Bidder submits on 14 June with bid security through **6 November 2026**. Required through date under Addendum 2: **9 November 2026** → **INVALID** (`INSUFFICIENT_BID_SECURITY_VALIDITY`).
+
+If a model uses the base June 10 deadline, required through becomes 5 November and 6 November looks sufficient → false **VALID**. The benchmark catches this with strict grading and clause grounding.
+
 ## Why this exists
 
 Frontier models can sound legally fluent while using the wrong controlling clause or outdated deadline. Procurement compliance often turns on exact procedural validity, not broad summarization.
@@ -21,15 +66,7 @@ Frontier models can sound legally fluent while using the wrong controlling claus
 - **Aggregate leaderboard CLI** and a one-command **model × prompt matrix runner**
 - Fake/sample pipeline outputs and real Azure OpenAI evaluation artifacts
 - Mini evaluation reports (with attribution + paired consistency) and failure-case documentation
-- 110 automated tests and GitHub Actions CI (lint → validate → verify-gold → test → grade → leaderboard)
-
-## Core failure case (Item 002)
-
-Base Tender Data Sheet deadline: **10 June 2026**. Addendum 2 extends submission to **14 June 2026**. Bid validity runs 120 calendar days from the controlling deadline; bid security must remain valid 28 days beyond that (ITB 18.1 + ITB 19.3).
-
-Bidder submits on 14 June with bid security through **6 November 2026**. Required through date under Addendum 2: **9 November 2026** → **INVALID** (`INSUFFICIENT_BID_SECURITY_VALIDITY`).
-
-If a model uses the base June 10 deadline, required through becomes 5 November and 6 November looks sufficient → false **VALID**. The benchmark catches this with strict grading and clause grounding.
+- 117 automated tests and GitHub Actions CI (lint → validate → verify-gold → test → grade → leaderboard)
 
 ## Quickstart
 
@@ -62,11 +99,67 @@ python -m tender_timeline.aggregate \
 Loaded 6 items
 All items valid
 All gold answers verified
-============================= 110 passed in ~7s =============================
+============================= 117 passed in ~7s =============================
 Wrote grade results to .../reports/sample_grade_results.json
 Wrote evaluation report
 Wrote leaderboard
 Demo complete. See reports/mini_eval_report.md and reports/leaderboard.md
+```
+
+## Procedural oracle and gold verification
+
+Gold answers are not hand-trusted constants. `tender_timeline/calculator.py` computes the operative
+deadline, bid-security validity cascade, protest window, and verdict directly from each item's
+`compute_spec` (rule parameters) + demo calendar. The `--verify-gold` gate recomputes every item and
+asserts the authored `expected_answer` matches the oracle (operative deadline, required bid-security
+date, verdict, failure code) — and runs in CI:
+
+```bash
+python -m tender_timeline.validate_items --items data/public_dev/items --verify-gold
+# → All gold answers verified
+```
+
+## Grading
+
+```bash
+python -m tender_timeline.grade \
+  --items data/public_dev/items \
+  --predictions <outputs.jsonl> \
+  --out <grade_results.json>
+```
+
+Metrics:
+
+| Metric | Meaning |
+|--------|---------|
+| **Strict accuracy** | All strict fields + clause grounding pass |
+| **Verdict accuracy** | VALID/INVALID match |
+| **Failure-code accuracy** | `failure_reason_code` match |
+| **Clause-grounding accuracy** | Required clause keywords present |
+| **Paired consistency** | Fraction of matched INVALID/VALID control pairs the model gets right on *both* members (exposes always-INVALID pattern-matching that verdict accuracy hides) |
+| **Right-reason accuracy** | Strict pass *and* no construct-relevant attribution (cascade error, wrong rule, wrong controlling deadline, clause-grounding failure) |
+| **Parse-error rate** | Fraction of unparseable outputs |
+
+**Clause-grounding gate:** a model that returns the correct verdict from the wrong controlling clause can still fail strict grading.
+
+Each graded item also carries a `failure_attribution` list (oracle-driven diagnosis of *which* reasoning step broke) and `attribution_detail` with evidence (predicted vs computed).
+
+See `EVAL_CARD.md`.
+
+## Leaderboard and matrix runner
+
+Aggregate any directory of `*_grade_results.json` into a model × prompt leaderboard:
+
+```bash
+python -m tender_timeline.aggregate --results-dir baselines/outputs --out reports/leaderboard.md
+```
+
+Run all three prompts for one provider/model in a single command:
+
+```bash
+python -m tender_timeline.run_matrix \
+  --provider anthropic --model claude-sonnet-4-6 \
+  --items data/public_dev/items
 ```
 
 ## Run baselines
@@ -110,99 +203,6 @@ Public-dev data (`data/public_dev/`) is simplified and perturbed for evaluation 
 - `data/public_dev/items/` — 6 benchmark JSON items
 - `data/public_dev/documents/` — 3 document families
 - `data/public_dev/calendars/` — demo calendars (not official legal calendars)
-
-## Grading
-
-```bash
-python -m tender_timeline.grade \
-  --items data/public_dev/items \
-  --predictions <outputs.jsonl> \
-  --out <grade_results.json>
-```
-
-Metrics:
-
-| Metric | Meaning |
-|--------|---------|
-| **Strict accuracy** | All strict fields + clause grounding pass |
-| **Verdict accuracy** | VALID/INVALID match |
-| **Failure-code accuracy** | `failure_reason_code` match |
-| **Clause-grounding accuracy** | Required clause keywords present |
-| **Paired consistency** | Fraction of matched INVALID/VALID control pairs the model gets right on *both* members (exposes always-INVALID pattern-matching that verdict accuracy hides) |
-| **Right-reason accuracy** | Strict pass *and* no construct-relevant attribution (cascade error, wrong rule, wrong controlling deadline, clause-grounding failure) |
-| **Parse-error rate** | Fraction of unparseable outputs |
-
-**Clause-grounding gate:** a model that returns the correct verdict from the wrong controlling clause can still fail strict grading.
-
-Each graded item also carries a `failure_attribution` list (oracle-driven diagnosis of *which* reasoning step broke) and `attribution_detail` with evidence (predicted vs computed).
-
-See `EVAL_CARD.md`.
-
-## Procedural oracle and gold verification
-
-Gold answers are not hand-trusted constants. `tender_timeline/calculator.py` computes the operative
-deadline, bid-security validity cascade, protest window, and verdict directly from each item's
-`compute_spec` (rule parameters) + demo calendar. The `--verify-gold` gate recomputes every item and
-asserts the authored `expected_answer` matches the oracle (operative deadline, required bid-security
-date, verdict, failure code) — and runs in CI:
-
-```bash
-python -m tender_timeline.validate_items --items data/public_dev/items --verify-gold
-# → All gold answers verified
-```
-
-## Leaderboard and matrix runner
-
-Aggregate any directory of `*_grade_results.json` into a model × prompt leaderboard:
-
-```bash
-python -m tender_timeline.aggregate --results-dir baselines/outputs --out reports/leaderboard.md
-```
-
-Run all three prompts for one provider/model in a single command:
-
-```bash
-python -m tender_timeline.run_matrix \
-  --provider anthropic --model claude-sonnet-4-6 \
-  --items data/public_dev/items
-```
-
-## Real-model results summary (two deployments)
-
-Two real OpenAI-family models, three prompts each (18 + 18 live records, zero parse errors).
-
-**Azure `gpt-5.4-nano`** (weaker / contrast model):
-
-| Prompt | Strict | Verdict | Failure Code | Clause | Paired Consist. | Right-Reason |
-|--------|-------:|--------:|-------------:|-------:|----------------:|-------------:|
-| naive | 0.67 | 1.00 | 0.67 | 0.83 | 1.00 | 0.50 |
-| clause_first | 0.67 | 1.00 | 0.67 | 1.00 | 1.00 | 0.50 |
-| event_graph_first | 0.67 | 0.83 | 0.67 | 1.00 | **0.50** | 0.50 |
-
-**OpenAI `gpt-5.5`** (frontier model):
-
-| Prompt | Strict | Verdict | Failure Code | Clause | Paired Consist. | Right-Reason |
-|--------|-------:|--------:|-------------:|-------:|----------------:|-------------:|
-| naive | 0.83 | 1.00 | 0.83 | 0.83 | 1.00 | 0.83 |
-| clause_first | **1.00** | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
-| event_graph_first | 0.83 | 1.00 | 1.00 | 1.00 | 1.00 | 0.83 |
-
-**The benchmark discriminates.** `gpt-5.4-nano` falls into the Kenya bid-security cascade trap — on
-`event_graph_first` it grounds all three clauses and uses the Addendum 2 deadline but miscalculates the
-cascade (`Nov 6` vs `Nov 9`), returns **VALID**, and `paired_consistency` drops to **0.50**
-(auto-tagged `CASCADE_ARITHMETIC_ERROR`). `gpt-5.5` **solves that trap** on every prompt — verdict 1.00,
-paired consistency 1.00 throughout — and reaches a clean **1.00 strict on `clause_first`**.
-
-**What gpt-5.5 still trips on (honest residuals, all on Item 002):**
-- **Failure-code taxonomy** — it understands the defect but labels it `BID_SECURITY_VALIDITY_TOO_SHORT`
-  instead of the canonical `INSUFFICIENT_BID_SECURITY_VALIDITY` (taxonomy, not reasoning).
-- **A missed clause keyword** on `naive` (omits "Addendum 2" from its grounding).
-
-> Note: running `gpt-5.5` surfaced — and we then fixed — an end-of-day grading artifact on Item 005
-> (`23:59:59` vs gold `23:59:00`). The grader now treats end-of-day `23:59:00`–`23:59:59` as equivalent;
-> see Limitations. The tables above reflect the corrected grader.
-
-Full report: `reports/real_model_eval_report.md`; cross-model table: `reports/leaderboard.md`.
 
 ## Reports
 
